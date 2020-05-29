@@ -220,7 +220,8 @@ services:
 **Exposed port**
 
 Traefik automatically map the port 80 to the container port if a single port is exposed. If multiple ones or none are
-described in the `Dockerfile` of the container, mapped port must be specified in a label.
+described in the `Dockerfile` of the container, mapped port must be specified in a label. It is advised to always
+specify mapped port to avoid surprises.
 
 docker-compose.yml
 ```yaml
@@ -230,7 +231,7 @@ services:
     # ...
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.myproject_myservice.loadbalancer.server.port=8080'
+      - 'traefik.http.services.myproject_myservice.loadbalancer.server.port=8080'
 # ...
 ```
 
