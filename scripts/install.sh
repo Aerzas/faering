@@ -113,7 +113,7 @@ install_repository() {
 # Generate and install certificates.
 install_certificates() {
   echo "${BLUE}Certificates: generating...${RESET}";
-  if [ -f "${FAERING}/certificates/${PROJECT_DOMAIN}.rootCA.crt" ]; then
+  if [ -f "${FAERING}/certificates/${FAERING_PROJECT_DOMAIN}.rootCA.crt" ]; then
     echo "Certificates already exist.";
   else
     docker-compose -f ${FAERING}/docker-compose.ssl-keygen.yml run --rm sslkeygen;
@@ -127,13 +127,13 @@ install_certificates() {
   echo "${BLUE}Certificates: trusting...${RESET}";
   case ${PLATFORM} in
     arch)
-      sudo trust anchor --store ${FAERING}/certificates/${PROJECT_DOMAIN}.rootCA.crt;
+      sudo trust anchor --store ${FAERING}/certificates/${FAERING_PROJECT_DOMAIN}.rootCA.crt;
       ;;
     darwin)
-      sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${FAERING}/certificates/${PROJECT_DOMAIN}.rootCA.crt;
+      sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${FAERING}/certificates/${FAERING_PROJECT_DOMAIN}.rootCA.crt;
       ;;
     debian)
-      sudo cp ${FAERING}/certificates/${PROJECT_DOMAIN}.rootCA.crt /usr/local/share/ca-certificates/${PROJECT_DOMAIN}.rootCA.crt;
+      sudo cp ${FAERING}/certificates/${FAERING_PROJECT_DOMAIN}.rootCA.crt /usr/local/share/ca-certificates/${FAERING_PROJECT_DOMAIN}.rootCA.crt;
       sudo update-ca-certificates;
       ;;
     *)
@@ -143,21 +143,22 @@ install_certificates() {
 }
 
 # Install and configure Dnsmasq
+# This step should be the last as restarting the NetworkManager may take some time.
 install_dnsmasq() {
   if [ ${FAERING_INSTALL_DNSMASQ} != yes ]; then
     echo "${BLUE}Dnsmasq: installation skipped.${RESET}";
     exit 0;
   fi;
 
-  if [ $(ping -c1 faering.docker.test | sed -nE 's/^PING[^(]+\(([^)]+)\).*/\1/p') = 127.0.0.1 ]
+  if [ $(ping -c1 faering.docker.test | sed -nE 's/^PING[^(]+\(([^)]+)\).*/\1/p') = 127.0.0.1 ]; then
     echo "${BLUE}Dnsmasq: *.docker.test forwarded to 127.0.0.1, installation skipped..${RESET}";
   fi;
 
   echo "${BLUE}Dnsmasq: installing and configuring...${RESET}";
   case ${PLATFORM} in
     arch)
-      echo "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null;
-      echo "address=/${FAERING_PROJECT_DOMAIN}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/local-domains/faering.conf >/dev/null;
+      echo -e "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null;
+      echo -e "address=/${FAERING_PROJECT_DOMAIN}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/faering.conf >/dev/null;
       sudo systemctl restart NetworkManager;
       ;;
     darwin)
@@ -166,7 +167,7 @@ install_dnsmasq() {
       brew install dnsmasq;
       echo "${BLUE}Dnsmasq: configure Dnsmasq.${RESET}";
       mkdir -p $(brew --prefix)/etc/;
-      echo "address=/${FAERING_PROJECT_DOMAIN}/127.0.0.1\nstrict-order" > $(brew --prefix)/etc/dnsmasq.conf;
+      echo -e "address=/${FAERING_PROJECT_DOMAIN}/127.0.0.1\nstrict-order" > $(brew --prefix)/etc/dnsmasq.conf;
       echo "${BLUE}Dnsmasq: launch Dnsmasq.${RESET}";
       sudo cp $(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist /Library/LaunchDaemons;
       sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist;
@@ -177,8 +178,8 @@ install_dnsmasq() {
     debian)
       sudo apt update;
       sudo apt install dnsmasq-base;
-      echo "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null;
-      echo "address=/${FAERING_PROJECT_DOMAIN}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/local-domains/faering.conf >/dev/null;
+      echo -e "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null;
+      echo -e "address=/${FAERING_PROJECT_DOMAIN}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/faering.conf >/dev/null;
       sudo systemctl stop systemd-resolved;
       sudo mv /etc/resolv.conf /etc/resolv.conf.bck;
       sudo ln -s /var/run/NetworkManager/resolv.conf /etc/resolv.conf;
@@ -198,7 +199,7 @@ start_containers() {
 
 # Display success information.
 display_information() {
-  echo "\n";
+  echo -e "\n";
   echo "${GREEN}Faering successfully installed!${RESET}";
   echo "${GREEN}- Traefik: http://traefik.${FAERING_PROJECT_DOMAIN} or https://traefik.${FAERING_PROJECT_DOMAIN}${RESET}";
   echo "${GREEN}- Portainer: http://portainer.${FAERING_PROJECT_DOMAIN} or https://portainer.${FAERING_PROJECT_DOMAIN}${RESET}";
@@ -212,8 +213,8 @@ install() {
   check_requirements;
   install_repository;
   install_certificates;
-  install_dnsmasq;
   start_containers;
+  install_dnsmasq;
   display_information;
 }
 

@@ -30,6 +30,9 @@ Features:
 
 Automated installation supports those platforms at the moment: Arch Linux, Debian, MacOS and their derivatives.
 
+Note that some browser will not use the system keystore and will require certificates manual installation. Started
+browsers need to be restarted after the installation process to take into account the new certificate.
+
 **Via cURL**
 
 ```sh
@@ -40,6 +43,16 @@ sh -c "$(curl -fsSL https://framagit.org/faering/faering/-/raw/master/scripts/in
 
 ```sh
 sh -c "$(wget -O- https://framagit.org/faering/faering/-/raw/master/scripts/install.sh)"
+```
+
+**Manual inspection**
+
+It is healthy to first check scripts you downloaded from unknown projects. You can download the script first, inspect
+it, and run it if you think everything is fine.
+```sh
+curl -Lo /tmp/install.sh https://framagit.org/faering/faering/-/raw/master/scripts/install.sh
+chmod +x /tmp/install.sh
+sh /tmp/install.sh
 ```
 
 ### Manual installation
@@ -58,7 +71,8 @@ docker-compose -f ${FAERING:~/.faering}/docker-compose.ssl-keygen.yml run --rm s
 
 **Trust root CA globally**
 
-Note that some browser will not use the system keystore and will require certificate manual installation.
+Note that some browser will not use the system keystore and will require certificates manual installation. Started
+browsers need to be restarted to take into account the new certificate.
 
 Archlinux:
 ```sh
@@ -83,7 +97,7 @@ Archlinux:
 # Configure NetworkManager to use Dnsmaq
 echo "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null
 # Configure Dnsmasq to forward any *.docker.test domain to the loopback local IPv4 interface
-echo "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/local-domains/faering.conf >/dev/null
+echo "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/faering.conf >/dev/null
 # Restart NetworkManager
 sudo systemctl restart NetworkManager
 ```
@@ -96,7 +110,7 @@ sudo apt install dnsmasq-base
 # Configure NetworkManager to use Dnsmaq
 echo "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null
 # Configure Dnsmasq to forward any *.docker.test domain to the loopback local IPv4 interface
-echo "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/local-domains/faering.conf >/dev/null
+echo "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/faering.conf >/dev/null
 # Stop systemd-resolved and let NetworkManager handle /etc/resolv.conf
 sudo systemctl stop systemd-resolved
 sudo mv /etc/resolv.conf /etc/resolv.conf.bck
