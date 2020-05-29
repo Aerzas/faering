@@ -16,6 +16,7 @@ Features:
     - [Automated installation](#automated-installation)
     - [Manual installation](#manual-installation)
     - [Configuration](#configuration)
+- [How to use](#how-to-use)
 - [Resources](#resources)
 
 ## Setup
@@ -170,8 +171,72 @@ A default configuration applies and should suit most cases, but it can be fine-t
 | `FAERING_CERTIFICATE_SUBJECT_ORGANIZATION` | Certificate organization | `Faering`
 | `FAERING_CERTIFICATE_SUBJECT_ORGANIZATION_UNIT` | Certificate organization unit | `Docker`
 
+## How to use
+
+**Expose a container**
+
+Containers you want to expose via a domain must be on the same network as Traefik and be explicitly labelled with
+`traefik.enable=true`. The Traefik network is defined by the variable `FAERING_NETWORK` which is `faering` by default.
+
+Containers are accessible as `service_name`-`COMPOSE_PROJECT_NAME`.`FAERING_PROJECT_DOMAIN` where `service_name` is the
+key of the service in the `docker-compose.yml` file, `COMPOSE_PROJECT_NAME` is a local environment variable or the name
+of the parent folder by default, and `FAERING_PROJECT_DOMAIN` is a Færing environnement variable or `docker.test` by
+default. As an example, a `myservice` container inside a `myproject` folder with default configurations will be
+accessible via http://myservice-myproject.docker.test and https://myservice-myproject.docker.test.
+
+docker-compose.yml
+```yaml
+version: '3.5'
+services:
+  myservice:
+    # ...
+    networks:
+      - faering
+    labels:
+      - 'traefik.enable=true'
+# ...
+networks:
+  faering:
+    external: true
+```
+
+**Custom sub-domain**
+
+Domains can be customized via a label. Note that only `FAERING_PROJECT_DOMAIN` (`docker.test` by default) are handled by
+Dnsmasq in the Færing setup.
+
+docker-compose.yml
+```yaml
+version: '3.5'
+services:
+  myservice:
+    # ...
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.myproject_myservice.rule=Host(`custom_name.docker.test`)'
+# ...
+```
+
+**Exposed port**
+
+Traefik automatically map the port 80 to the container port if a single port is exposed. If multiple ones or none are
+described in the `Dockerfile` of the container, mapped port must be specified in a label.
+
+docker-compose.yml
+```yaml
+version: '3.5'
+services:
+  myservice:
+    # ...
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.myproject_myservice.loadbalancer.server.port=8080'
+# ...
+```
+
 ## Resources
 
+- [Dnsmasq documentation](http://www.thekelleys.org.uk/dnsmasq/doc.html)
 - [Traefik documentation](https://docs.traefik.io/)
 - [Traefik docker image](https://hub.docker.com/_/traefik)
 - [Portainer documentation](https://www.portainer.io/documentation/)
