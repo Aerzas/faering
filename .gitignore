@@ -1,0 +1,12 @@
+# Certificates
+*.crt
+*.csr
+*.key
+*.pem
+*.srl
+
+# Environement variables
+.env
+
+# Docker compose
+docker-compose.override.yml
