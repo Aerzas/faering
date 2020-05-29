@@ -65,7 +65,7 @@ identify_platform() {
     PLATFORM=${PLATFORM};
   elif [ -f /etc/arch-release ]; then
     PLATFORM='arch';
-  elif [ ${OSTYPE} = darwin* ]; then
+  elif [[ ${OSTYPE} = darwin* ]]; then
     PLATFORM='darwin';
   elif [ -f /etc/debian-version ]; then
     PLATFORM='debian';
@@ -100,7 +100,7 @@ check_requirements() {
 # Clone faering git repository.
 install_repository() {
   if [ -d "${FAERING}/.git" ] && [ $(git --git-dir "${FAERING}/.git" config --get remote.origin.url) = git@framagit.org:faering/faering.git ]; then
-    echo "Repository: git repository already exists, updating...";
+    echo "${BLUE}Repository: git repository already exists, updating...${RESET}";
     git --git-dir "${FAERING}/.git" pull;
   elif [ "$(ls -A ${FAERING})" ]; then
     error "${FAERING} is not empty.";
@@ -121,7 +121,7 @@ install_certificates() {
 
   if [ ${FAERING_TRUST_CERTIFICATES} != yes ]; then
     echo "${BLUE}Certificates: trust skipped.${RESET}";
-    exit 0;
+    return 0;
   fi;
 
   echo "${BLUE}Certificates: trusting...${RESET}";
@@ -147,11 +147,12 @@ install_certificates() {
 install_dnsmasq() {
   if [ ${FAERING_INSTALL_DNSMASQ} != yes ]; then
     echo "${BLUE}Dnsmasq: installation skipped.${RESET}";
-    exit 0;
+    return 0;
   fi;
 
   if [ $(ping -c1 faering.docker.test | sed -nE 's/^PING[^(]+\(([^)]+)\).*/\1/p') = 127.0.0.1 ]; then
     echo "${BLUE}Dnsmasq: *.docker.test forwarded to 127.0.0.1, installation skipped..${RESET}";
+    return 0;
   fi;
 
   echo "${BLUE}Dnsmasq: installing and configuring...${RESET}";
@@ -162,9 +163,11 @@ install_dnsmasq() {
       sudo systemctl restart NetworkManager;
       ;;
     darwin)
-      echo "${BLUE}Dnsmasq: install Dnsmasq.${RESET}";
-      brew up;
-      brew install dnsmasq;
+      if [[ $(brew ls --versions dnsmasq) ]]; then
+        echo "${BLUE}Dnsmasq: install Dnsmasq.${RESET}";
+        brew up;
+        brew install dnsmasq;
+      fi;
       echo "${BLUE}Dnsmasq: configure Dnsmasq.${RESET}";
       mkdir -p $(brew --prefix)/etc/;
       echo -e "address=/${FAERING_PROJECT_DOMAIN}/127.0.0.1\nstrict-order" > $(brew --prefix)/etc/dnsmasq.conf;
@@ -173,7 +176,7 @@ install_dnsmasq() {
       sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist;
       echo "${BLUE}Dnsmasq: create resolver.${RESET}";
       sudo mkdir -p /etc/resolver;
-      echo "nameserver 127.0.0.1" | tee /etc/resolver/docker.test >/dev/null;
+      echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/docker.test >/dev/null;
       ;;
     debian)
       sudo apt update;
@@ -199,7 +202,7 @@ start_containers() {
 
 # Display success information.
 display_information() {
-  echo -e "\n";
+  echo "";
   echo "${GREEN}Faering successfully installed!${RESET}";
   echo "${GREEN}- Traefik: http://traefik.${FAERING_PROJECT_DOMAIN} or https://traefik.${FAERING_PROJECT_DOMAIN}${RESET}";
   echo "${GREEN}- Portainer: http://portainer.${FAERING_PROJECT_DOMAIN} or https://portainer.${FAERING_PROJECT_DOMAIN}${RESET}";

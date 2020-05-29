@@ -51,6 +51,7 @@ It is healthy to first check scripts you downloaded from unknown projects. You c
 it, and run it if you think everything is fine.
 ```sh
 curl -Lo /tmp/install.sh https://framagit.org/faering/faering/-/raw/master/scripts/install.sh
+less /tmp/install.sh
 chmod +x /tmp/install.sh
 sh /tmp/install.sh
 ```
@@ -95,9 +96,9 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
 Archlinux:
 ```sh
 # Configure NetworkManager to use Dnsmaq
-echo "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null
+echo -e "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null
 # Configure Dnsmasq to forward any *.docker.test domain to the loopback local IPv4 interface
-echo "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/faering.conf >/dev/null
+echo -e "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/faering.conf >/dev/null
 # Restart NetworkManager
 sudo systemctl restart NetworkManager
 ```
@@ -108,9 +109,9 @@ Debian / Ubuntu:
 sudo apt update
 sudo apt install dnsmasq-base
 # Configure NetworkManager to use Dnsmaq
-echo "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null
+echo -e "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/dnsmasq.conf >/dev/null
 # Configure Dnsmasq to forward any *.docker.test domain to the loopback local IPv4 interface
-echo "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/faering.conf >/dev/null
+echo -e "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" | sudo tee /etc/NetworkManager/dnsmasq.d/faering.conf >/dev/null
 # Stop systemd-resolved and let NetworkManager handle /etc/resolv.conf
 sudo systemctl stop systemd-resolved
 sudo mv /etc/resolv.conf /etc/resolv.conf.bck
@@ -126,13 +127,13 @@ brew up
 brew install dnsmasq
 # Configure Dnsmasq to forward any *.docker.test domain to the loopback local IPv4 interface
 mkdir -p $(brew --prefix)/etc/
-echo "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" > $(brew --prefix)/etc/dnsmasq.conf
+echo -e "address=/${FAERING_PROJECT_DOMAIN:-docker.test}/127.0.0.1\nstrict-order" > $(brew --prefix)/etc/dnsmasq.conf
 # Start Dnsmasq on every startup and launch it now
-sudo cp -v $(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist /Library/LaunchDaemons
+sudo cp $(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist /Library/LaunchDaemons
 sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 # Create resolver
 sudo mkdir -p /etc/resolver
-echo "nameserver 127.0.0.1" | tee /etc/resolver/docker.test >/dev/null
+echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/docker.test >/dev/null
 ```
 
 **Start the Færing containers**
