@@ -194,6 +194,14 @@ install_dnsmasq() {
   esac;
 }
 
+# Export the user ID as an environment variable.
+export_user_id() {
+  if [ -z ${USER_ID} ]; then
+    echo "${BLUE}Exporting user ID...${RESET}";
+    echo -e '#!/bin/sh\nexport USER_ID=$(id -u)' | sudo tee /etc/profile.d/faering.sh >/dev/null;
+  fi;
+}
+
 # Start Faering containers.
 start_containers() {
   echo "${BLUE}Starting containers...${RESET}";
@@ -216,6 +224,7 @@ install() {
   check_requirements;
   install_repository;
   install_certificates;
+  export_user_id;
   start_containers;
   install_dnsmasq;
   display_information;

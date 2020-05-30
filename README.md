@@ -143,6 +143,15 @@ echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/docker.test >/dev/null
 docker-compose -f ${FAERING:~/.faering}/docker-compose.yml up -d
 ```
 
+**Export user ID**
+
+During development, it is advised to mount codebase with the local user to avoid permission issues. The USER_ID is
+exported for all users to be referenced later in docker-compose files.
+
+```sh
+echo -e '#!/bin/sh\nexport USER_ID=$(id -u)' | sudo tee /etc/profile.d/faering.sh
+```
+
 ### Configuration
 
 A default configuration applies and should suit most cases, but it can be fine-tuned via:
