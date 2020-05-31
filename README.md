@@ -137,26 +137,37 @@ sudo mkdir -p /etc/resolver
 echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/docker.test >/dev/null
 ```
 
+**Export environment variables**
+
+During development, it is advised to mount codebase with the local user to avoid permission issues. The USER_ID is
+exported for all users to be referenced later in `docker-compose.yml` files. The Færing environment variables defined
+in the `.env.dist` and `.env` are also exported globally.
+
+Edit your shell profile (`~/.bashrc`, `~/.config/fish/config.fish` or `~/.zshrc` for example) to add the environment
+variables.
+```sh
+export FAERING=~/.faering
+source ${FAERING}/config/profile.sh
+```
+
+Update the current session.
+```sh
+source ${FAERING:-~/.faering}/config/profile.sh
+```
+
 **Start the Færing containers**
 
 ```sh
 docker-compose -f ${FAERING:~/.faering}/docker-compose.yml up -d
 ```
 
-**Export user ID**
-
-During development, it is advised to mount codebase with the local user to avoid permission issues. The USER_ID is
-exported for all users to be referenced later in docker-compose files.
-
-```sh
-echo -e '#!/bin/sh\nexport USER_ID=$(id -u)' | sudo tee /etc/profile.d/faering.sh
-```
-
 ### Configuration
 
-A default configuration applies and should suit most cases, but it can be fine-tuned via:
-- An `.env` file, simply copy the one provided and adjust to you needs: `cp .env.dist .env`.
-- Global environment variables declared in your profile (`~/.profile`, `~/.bashrc` or `~/.zshrc` for example).
+A default configuration applies and should suit most cases, but it can be fine-tuned via an `.env` file.
+
+```sh
+cp ${FAERING:~/.faering}/.env.dist ${FAERING:~/.faering}/.env`
+```
 
 | Variable | Description | Default Value
 | --- | --- | ---

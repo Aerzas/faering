@@ -11,10 +11,11 @@
 
 set -e;
 
-# Load existing .env file.
-set -a;
-test -f ${FAERING:-~/.faering}/.env && ${FAERING:-~/.faering}/.env;
-set +a;
+# Environment variables.
+set -a
+[ -f ${FAERING:-~/.faering}/.env.dist ] && . ${FAERING:-~/.faering}/.env.dist;
+[ -f ${FAERING:-~/.faering}/.env ] && . ${FAERING:-~/.faering}/.env;
+set +a
 
 # Set default environment variables.
 FAERING=${FAERING:-~/.faering};
@@ -61,7 +62,7 @@ setup_colors() {
 
 # Identify platform for future commands.
 identify_platform() {
-  if [ ! -z ${PLATFORM}]; then
+  if [ ! -z ${PLATFORM} ]; then
     PLATFORM=${PLATFORM};
   elif [ -f /etc/arch-release ]; then
     PLATFORM='arch';
@@ -163,7 +164,7 @@ install_dnsmasq() {
       sudo systemctl restart NetworkManager;
       ;;
     darwin)
-      if [[ $(brew ls --versions dnsmasq) ]]; then
+      if [ -z "$(brew ls --versions dnsmasq)" ]; then
         echo "${BLUE}Dnsmasq: install Dnsmasq.${RESET}";
         brew up;
         brew install dnsmasq;
@@ -194,11 +195,34 @@ install_dnsmasq() {
   esac;
 }
 
-# Export the user ID as an environment variable.
-export_user_id() {
-  if [ -z ${USER_ID} ]; then
-    echo "${BLUE}Exporting user ID...${RESET}";
-    echo -e '#!/bin/sh\nexport USER_ID=$(id -u)' | sudo tee /etc/profile.d/faering.sh >/dev/null;
+# Export the user ID and Faering environment variables.
+export_variables() {
+  command_exists bash && {
+		write_shell_profile ~/.bashrc;
+	};
+
+	command_exists fish && {
+		write_shell_profile ~/.config/fish/config.fish;
+	};
+
+	command_exists zsh && {
+		write_shell_profile ~/.zshrc;
+	};
+}
+
+# Writes shell profile.
+write_shell_profile() {
+  profile="${1}";
+  if [ -z "${profile}" ]; then
+    return 0;
+  elif [ -z "$(grep 'export FAERING=' ${profile})" ]; then
+    echo "${BLUE}Exporting environment variables to ${profile}...${RESET}";
+    {
+      echo ''
+      echo '# Faering'
+      echo "export FAERING=${FAERING:-~/.faering}"
+      echo 'source ${FAERING}/config/profile.sh'
+    } >> "${profile}";
   fi;
 }
 
@@ -224,7 +248,7 @@ install() {
   check_requirements;
   install_repository;
   install_certificates;
-  export_user_id;
+  export_variables;
   start_containers;
   install_dnsmasq;
   display_information;
