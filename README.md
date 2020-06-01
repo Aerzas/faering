@@ -17,6 +17,7 @@ Features:
     - [Manual installation](#manual-installation)
     - [Configuration](#configuration)
 - [How to use](#how-to-use)
+- [Recipes](#recipes)
 - [Resources](#resources)
 
 ## Setup
@@ -254,6 +255,12 @@ services:
       - 'traefik.http.services.myproject_myservice.loadbalancer.server.port=8080'
 # ...
 ```
+
+## Recipes
+
+Færing recipes are optimized local environments for a given application.
+
+- [Drupal](https://framagit.org/faering/recipe-drupal)
 
 ## Resources
 
