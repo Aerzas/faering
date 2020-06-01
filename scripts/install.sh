@@ -66,7 +66,7 @@ identify_platform() {
     PLATFORM="${PLATFORM}"
   elif [ -f /etc/arch-release ]; then
     PLATFORM='arch'
-  elif [[ ${OSTYPE} == darwin* ]]; then
+  elif [ "${OSTYPE}" != "${OSTYPE#darwin}" ]; then
     PLATFORM='darwin'
   elif [ -f /etc/debian-version ]; then
     PLATFORM='debian'
