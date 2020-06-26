@@ -7,7 +7,7 @@
 #   FAERING=~/.docker sh install.sh
 #
 # Available options are described in the README.md file:
-# https://framagit.org/faering/faering#configuration.
+# https://github.com/aerzas/faering#configuration.
 
 set -e
 
@@ -92,14 +92,14 @@ check_requirements() {
 
 # Clone faering git repository.
 install_repository() {
-  if [ -d "${FAERING}/.git" ] && [ "$(git --git-dir "${FAERING}/.git" config --get remote.origin.url)" = git@framagit.org:faering/faering.git ]; then
+  if [ -d "${FAERING}/.git" ] && [ "$(git --git-dir "${FAERING}/.git" config --get remote.origin.url)" = git@github.com:Aerzas/faering.git ]; then
     echo "${BLUE}Repository: git repository already exists, updating...${RESET}"
     git --git-dir "${FAERING}/.git" pull
   elif [ "$(ls -A ${FAERING})" ]; then
     error "${FAERING} is not empty."
   else
     echo "${BLUE}Repository: cloning...${RESET}"
-    git clone git@framagit.org:faering/faering.git "${FAERING}"
+    git clone git@github.com:Aerzas/faering.git "${FAERING}"
   fi
 }
 

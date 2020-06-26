@@ -38,13 +38,13 @@ browsers need to be restarted after the installation process to take into accoun
 **Via cURL**
 
 ```sh
-sh -c "$(curl -fsSL https://framagit.org/faering/faering/-/raw/master/scripts/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/aerzas/faering/master/scripts/install.sh)"
 ```
 
 **Via wget**
 
 ```sh
-sh -c "$(wget -O- https://framagit.org/faering/faering/-/raw/master/scripts/install.sh)"
+sh -c "$(wget -O- https://raw.githubusercontent.com/aerzas/faering/master/scripts/install.sh)"
 ```
 
 **Manual inspection**
@@ -52,7 +52,7 @@ sh -c "$(wget -O- https://framagit.org/faering/faering/-/raw/master/scripts/inst
 It is healthy to first check scripts you downloaded from unknown projects. You can download the script first, inspect
 it, and run it if you think everything is fine.
 ```sh
-curl -Lo /tmp/install.sh https://framagit.org/faering/faering/-/raw/master/scripts/install.sh
+curl -Lo /tmp/install.sh https://raw.githubusercontent.com/aerzas/faering/master/scripts/install.sh
 less /tmp/install.sh
 chmod +x /tmp/install.sh
 sh /tmp/install.sh
@@ -63,7 +63,7 @@ sh /tmp/install.sh
 **Clone the Færing project**
 
 ```sh
-git clone git@framagit.org:faering/faering.git ${FAERING:~/.faering}
+git clone git@github.com:aerzas/faering.git ${FAERING:~/.faering}
 ```
 
 **Generate self-signed certificates for local HTTPS**
@@ -260,7 +260,7 @@ services:
 
 Færing recipes are optimized local environments for a given application.
 
-- [Drupal](https://framagit.org/faering/recipe-drupal)
+- [Drupal](https://github.com/aerzas/faering-drupal)
 
 ## Resources
 
