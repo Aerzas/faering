@@ -14,6 +14,7 @@ Features:
 - [Setup](#setup)
     - [Requirements](#requirements)
     - [Automated installation](#automated-installation)
+    - [Customized installation](#customized-installation)
     - [Manual installation](#manual-installation)
     - [Configuration](#configuration)
 - [How to use](#how-to-use)
@@ -58,18 +59,54 @@ chmod +x /tmp/install.sh
 sh /tmp/install.sh
 ```
 
+### Customized installation
+
+The customized installation leverages the ease of the automated installation with the possibility to tweak some default
+values.
+
+**Clone the Færing project**
+
+```sh
+git clone git@github.com:aerzas/faering.git ${FAERING:-~/.faering}
+```
+
+**Customize Færing variables**
+
+```sh
+cp ${FAERING:-~/.faering}/.env.dist ${FAERING:-~/.faering}/.env
+vi ${FAERING:-~/.faering}/.env
+```
+
+**Export environment variables**
+
+Edit your shell profile (`~/.bashrc`, `~/.config/fish/config.fish` or `~/.zshrc` for example) to add the environment
+variables.
+```sh
+source ${FAERING:-~/.faering}/config/profile.sh
+```
+
+Update the current session.
+```sh
+source ${FAERING:-~/.faering}/config/profile.sh
+```
+
+**Install Færing**
+```sh
+sh ${FAERING:-~/.faering}/scripts/install.sh
+```
+
 ### Manual installation
 
 **Clone the Færing project**
 
 ```sh
-git clone git@github.com:aerzas/faering.git ${FAERING:~/.faering}
+git clone git@github.com:aerzas/faering.git ${FAERING:-~/.faering}
 ```
 
 **Generate self-signed certificates for local HTTPS**
 
 ```sh
-docker-compose -f ${FAERING:~/.faering}/docker-compose.ssl-keygen.yml run --rm sslkeygen
+docker-compose -f ${FAERING:-~/.faering}/docker-compose.ssl-keygen.yml run --rm sslkeygen
 ```
 
 **Trust root CA globally**
@@ -79,18 +116,18 @@ browsers need to be restarted to take into account the new certificate.
 
 Archlinux:
 ```sh
-sudo trust anchor --store ${FAERING:~/.faering}/certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt
+sudo trust anchor --store ${FAERING:-~/.faering}/certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt
 ```
 
 Debian / Ubuntu:
 ```sh
-sudo cp ${FAERING:~/.faering}/certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt /usr/local/share/ca-certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt
+sudo cp ${FAERING:-~/.faering}/certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt /usr/local/share/ca-certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt
 sudo update-ca-certificates
 ```
 
 MacOS:
 ```sh
-sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${FAERING:~/.faering}/certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${FAERING:-~/.faering}/certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt
 ```
 
 **Configure Dnsmasq**
@@ -159,7 +196,7 @@ source ${FAERING:-~/.faering}/config/profile.sh
 **Start the Færing containers**
 
 ```sh
-docker-compose -f ${FAERING:~/.faering}/docker-compose.yml up -d
+docker-compose -f ${FAERING:-~/.faering}/docker-compose.yml up -d
 ```
 
 ### Configuration
@@ -167,7 +204,7 @@ docker-compose -f ${FAERING:~/.faering}/docker-compose.yml up -d
 A default configuration applies and should suit most cases, but it can be fine-tuned via an `.env` file.
 
 ```sh
-cp ${FAERING:~/.faering}/.env.dist ${FAERING:~/.faering}/.env`
+cp ${FAERING:-~/.faering}/.env.dist ${FAERING:-~/.faering}/.env`
 ```
 
 | Variable | Description | Default Value
