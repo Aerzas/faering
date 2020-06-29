@@ -143,8 +143,8 @@ install_dnsmasq() {
     return 0
   fi
 
-  if [ "$(ping -c1 faering.docker.test | sed -nE 's/^PING[^(]+\(([^)]+)\).*/\1/p')" = '127.0.0.1' ]; then
-    echo "${BLUE}Dnsmasq: *.docker.test forwarded to 127.0.0.1, installation skipped..${RESET}"
+  if [ "$(ping -c1 "faering.${FAERING_PROJECT_DOMAIN}" | sed -nE 's/^PING[^(]+\(([^)]+)\).*/\1/p')" = '127.0.0.1' ]; then
+    echo "${BLUE}Dnsmasq: *.${FAERING_PROJECT_DOMAIN} forwarded to 127.0.0.1, installation skipped..${RESET}"
     return 0
   fi
 
@@ -178,7 +178,7 @@ install_dnsmasq() {
     sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
     echo "${BLUE}Dnsmasq: create resolver.${RESET}"
     sudo mkdir -p /etc/resolver
-    echo "nameserver 127.0.0.1" | sudo tee /etc/resolver/docker.test >/dev/null
+    echo "nameserver 127.0.0.1" | sudo tee "/etc/resolver/${FAERING_PROJECT_DOMAIN}" >/dev/null
     ;;
   debian)
     sudo apt update

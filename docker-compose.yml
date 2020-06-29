@@ -28,7 +28,9 @@ services:
       - '${FAERING_HTTPS_PORT:-443}:443'
     volumes:
       - ./config/traefik.yml:/etc/traefik/dynamic/faering.yml
-      - ./certificates/:/certs/:ro
+      - ./certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt:/certs/faering.rootCA.crt:ro
+      - ./certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.crt:/certs/faering.crt:ro
+      - ./certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.key:/certs/faering.key:ro
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - 'traefik.enable=true'
