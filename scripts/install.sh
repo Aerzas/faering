@@ -68,11 +68,11 @@ setup_colors() {
 
 # Identify platform for future commands.
 identify_platform() {
-  if [ ! -z "${PLATFORM}" ]; then
+  if [ -n "${PLATFORM}" ]; then
     PLATFORM="${PLATFORM}"
   elif [ -f /etc/arch-release ]; then
     PLATFORM='arch'
-  elif [ "${OSTYPE}" != "${OSTYPE#darwin}" ]; then
+  elif [ -n "${OSTYPE}" ] && [ "${OSTYPE}" != "${OSTYPE#darwin}" ]; then
     PLATFORM='darwin'
   elif [ -f /etc/debian_version ]; then
     PLATFORM='debian'
@@ -178,7 +178,7 @@ install_dnsmasq() {
     {
       echo "address=/${FAERING_PROJECT_DOMAIN}/127.0.0.1"
       echo 'strict-order'
-    } >"$(brew --prefix)/etc/dnsmasq.conf"
+    } > "$(brew --prefix)/etc/dnsmasq.conf"
     echo "${BLUE}Dnsmasq: launch Dnsmasq.${RESET}"
     sudo cp "$(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist" /Library/LaunchDaemons
     sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
@@ -210,9 +210,9 @@ install_dnsmasq() {
 
 # Export the user ID and Faering environment variables.
 export_variables() {
-  command_exists bash && write_shell_profile ~/.bashrc
-  command_exists fish && write_shell_profile ~/.config/fish/config.fish
-  command_exists zsh && write_shell_profile ~/.zshrc
+  command_exists bash && write_shell_profile ~/.bashrc || true
+  command_exists fish && write_shell_profile ~/.config/fish/config.fish || true
+  command_exists zsh && write_shell_profile ~/.zshrc || true
 }
 
 # Writes shell profile.
@@ -220,14 +220,14 @@ write_shell_profile() {
   profile="${1}"
   if [ -z "${profile}" ]; then
     return 0
-  elif [ -z "$(grep 'export FAERING=' ${profile})" ]; then
+  elif ! grep -q 'export FAERING=' "${profile}"; then
     echo "${BLUE}Exporting environment variables to ${profile}...${RESET}"
     {
       echo ''
       echo '# Faering'
       echo "export FAERING=${FAERING:-~/.faering}"
       echo 'source ${FAERING}/config/profile.sh'
-    } >>"${profile}"
+    } >> "${profile}"
   fi
 }
 
