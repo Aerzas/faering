@@ -17,6 +17,12 @@ set -a
 [ -f "${FAERING:-~/.faering}/.env" ] && . "${FAERING:-~/.faering}/.env"
 set +a
 
+# Set default user
+if [ -z "${USER_ID}" ]; then
+  USER_ID=$(id -u)
+  export USER_ID
+fi
+
 # Set default environment variables.
 FAERING=${FAERING:-~/.faering}
 FAERING_DEBUG=${FAERING_DEBUG:-false}
@@ -68,7 +74,7 @@ identify_platform() {
     PLATFORM='arch'
   elif [ "${OSTYPE}" != "${OSTYPE#darwin}" ]; then
     PLATFORM='darwin'
-  elif [ -f /etc/debian-version ]; then
+  elif [ -f /etc/debian_version ]; then
     PLATFORM='debian'
   else
     PLATFORM='unknown'
@@ -118,7 +124,7 @@ install_certificates() {
   fi
 
   echo "${BLUE}Certificates: trusting...${RESET}"
-  case ${PLATFORM} in
+  case "${PLATFORM}" in
   arch)
     sudo trust anchor --store "${FAERING}/certificates/${FAERING_PROJECT_DOMAIN}.rootCA.crt"
     ;;
@@ -149,7 +155,7 @@ install_dnsmasq() {
   fi
 
   echo "${BLUE}Dnsmasq: installing and configuring...${RESET}"
-  case ${PLATFORM} in
+  case "${PLATFORM}" in
   arch)
     {
       echo '[main]'

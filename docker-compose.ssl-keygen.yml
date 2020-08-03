@@ -13,4 +13,4 @@ services:
       SITE_DOMAIN: ${FAERING_PROJECT_DOMAIN:-docker.test}
     volumes:
       - ./certificates/:/certificates:rw
-    user: $USER_ID
+    user: ${USER_ID:-1000}
