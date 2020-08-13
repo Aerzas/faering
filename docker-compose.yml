@@ -21,7 +21,7 @@ services:
       TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT: 'false'
       TRAEFIK_PROVIDERS_DOCKER_NETWORK: ${FAERING_NETWORK:-faering}
       TRAEFIK_PROVIDERS_FILE_DIRECTORY: /etc/traefik/dynamic/
-      TRAEFIK_SERVERSTRANSPORT_ROOTCAS: /certs/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt
+      TRAEFIK_SERVERSTRANSPORT_ROOTCAS: /certs/faering.rootCA.crt
     restart: always
     ports:
       - '${FAERING_HTTP_PORT:-80}:80'

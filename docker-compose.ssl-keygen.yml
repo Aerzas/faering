@@ -2,7 +2,7 @@ version: '3.5'
 services:
 
   sslkeygen:
-    image: faering/ssl-keygen:1.0.1
+    image: faering/ssl-keygen:1.0.3
     container_name: ${FAERING_PROJECT_NAME:-faering}_sslkeygen
     environment:
       OPENSSL_CERTIFICATE_SUBJECT_COUNTRY: ${FAERING_CERTIFICATE_SUBJECT_COUNTRY:-CH}
