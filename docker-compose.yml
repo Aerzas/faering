@@ -40,15 +40,16 @@ services:
       - faering
 
   portainer:
-    image: portainer/portainer:1.24.0
+    image: portainer/portainer-ce:2.0.0-alpine
     container_name: ${FAERING_PROJECT_NAME:-faering}_portainer
     restart: unless-stopped
-    command: --no-auth -H unix:///var/run/docker.sock
+    command: -H unix:///var/run/docker.sock --admin-password=${FAERING_PORTAINER_PASSWORD} --no-analytics
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.${FAERING_PROJECT_NAME:-faering}_portainer.rule=Host(`portainer.${FAERING_PROJECT_DOMAIN:-docker.test}`)'
+      - 'traefik.http.services.${FAERING_PROJECT_NAME:-faering}_portainer.loadbalancer.server.port=9000'
     networks:
       - faering
 
