@@ -2,7 +2,7 @@ version: '3.5'
 services:
 
   traefik:
-    image: traefik:2.3.4
+    image: traefik:2.3.7
     container_name: ${FAERING_PROJECT_NAME:-faering}_traefik
     environment:
       TRAEFIK_API: 'true'
