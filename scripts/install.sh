@@ -98,14 +98,14 @@ check_requirements() {
 
 # Clone faering git repository.
 install_repository() {
-  if [ -d "${FAERING}/.git" ] && [ "$(git --git-dir "${FAERING}/.git" config --get remote.origin.url)" = git@github.com:Aerzas/faering.git ]; then
+  if [ -d "${FAERING}/.git" ] && [ "$(git --git-dir "${FAERING}/.git" config --get remote.origin.url)" = git@github.com:aerzas/faering.git ]; then
     echo "${BLUE}Repository: git repository already exists, updating...${RESET}"
     git --git-dir "${FAERING}/.git" pull
   elif [ "$(ls -A ${FAERING})" ]; then
     error "${FAERING} is not empty."
   else
     echo "${BLUE}Repository: cloning...${RESET}"
-    git clone git@github.com:Aerzas/faering.git "${FAERING}"
+    git clone git@github.com:aerzas/faering.git "${FAERING}"
   fi
 }
 
