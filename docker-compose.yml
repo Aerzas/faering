@@ -40,7 +40,7 @@ services:
       - faering
 
   portainer:
-    image: portainer/portainer-ce:2.14.1-alpine
+    image: portainer/portainer-ce:2.17.1-alpine
     container_name: ${FAERING_PROJECT_NAME:-faering}_portainer
     restart: unless-stopped
     command: -H unix:///var/run/docker.sock --admin-password=${FAERING_PORTAINER_PASSWORD} --no-analytics
