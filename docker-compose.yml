@@ -2,11 +2,12 @@ version: '3.5'
 services:
 
   traefik:
-    image: traefik:2.10.4
+    image: traefik:3.1.1
     container_name: ${FAERING_PROJECT_NAME:-faering}_traefik
     environment:
       TRAEFIK_API: 'true'
       TRAEFIK_API_DASHBOARD: 'true'
+      TRAEFIK_API_DISABLEDASHBOARDAD: 'true'
       TRAEFIK_API_DEBUG: ${FAERING_DEBUG:-false}
       TRAEFIK_API_INSECURE: 'true'
       TRAEFIK_ENTRYPOINTS_HTTP: 'true'
@@ -14,6 +15,7 @@ services:
       TRAEFIK_ENTRYPOINTS_HTTPS: 'true'
       TRAEFIK_ENTRYPOINTS_HTTPS_ADDRESS: ':${FAERING_HTTPS_PORT:-443}'
       TRAEFIK_ENTRYPOINTS_HTTPS_HTTP_TLS: 'true'
+      TRAEFIK_GLOBAL_CHECKNEWVERSION: 'false'
       TRAEFIK_GLOBAL_SENDANONYMOUSUSAGE: 'false'
       TRAEFIK_LOG_LEVEL: ERROR
       TRAEFIK_PROVIDERS_DOCKER: 'true'
