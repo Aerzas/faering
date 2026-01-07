@@ -1,7 +1,7 @@
 services:
 
   sslkeygen:
-    image: aerzas/ssl-keygen:2.0.1
+    image: aerzas/ssl-keygen:2.3.0
     container_name: ${FAERING_PROJECT_NAME:-faering}_sslkeygen
     environment:
       OPENSSL_CERTIFICATE_SUBJECT_COUNTRY: ${FAERING_CERTIFICATE_SUBJECT_COUNTRY:-CH}
