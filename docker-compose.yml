@@ -41,12 +41,12 @@ services:
       - faering
 
   portainer:
-    image: portainer/portainer-ce:2.27.5-alpine
+    image: portainer/portainer-ce:2.33.6-alpine
     container_name: ${FAERING_PROJECT_NAME:-faering}_portainer
     restart: unless-stopped
     command: -H unix:///var/run/docker.sock --admin-password=${FAERING_PORTAINER_PASSWORD} --no-analytics
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.${FAERING_PROJECT_NAME:-faering}_portainer.rule=Host(`portainer.${FAERING_PROJECT_DOMAIN:-docker.test}`)'
