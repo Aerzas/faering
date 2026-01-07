@@ -1,7 +1,7 @@
 services:
 
   traefik:
-    image: traefik:3.4.0
+    image: traefik:3.6.6
     container_name: ${FAERING_PROJECT_NAME:-faering}_traefik
     environment:
       TRAEFIK_API: 'true'
@@ -32,7 +32,7 @@ services:
       - ./certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.rootCA.crt:/certs/faering.rootCA.crt:ro
       - ./certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.crt:/certs/faering.crt:ro
       - ./certificates/${FAERING_PROJECT_DOMAIN:-docker.test}.key:/certs/faering.key:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.${FAERING_PROJECT_NAME:-faering}_traefik.rule=Host(`traefik.${FAERING_PROJECT_DOMAIN:-docker.test}`)'
